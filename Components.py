@@ -12,6 +12,15 @@ class GenericComponent:
     def __init__(self, name):
         self.name = name
 
+    def __repr__(self):
+        repString = f'''
+-----{self.name}-----
+--Last Service--
+Date: {self.lastService.date}
+Mileage: {self.lastService.miles}
+'''
+        return repString
+
     def setCurrentMileage(self,miles):
         self.currentMileage = miles
 
