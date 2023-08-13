@@ -1,16 +1,16 @@
-from datetime import date
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
-from Util import nullCheck
+from Util import nullCheck, BColours
 
 
 class ServiceRequirement:
-    def __init__(self, date, miles):
+    def __init__(self, date: date, miles: int):
             self.date = date
             self.miles = miles
 
 
 class GenericComponent:
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
         self.lastService = ServiceRequirement(None,None)
         self.serviceInterval = ServiceRequirement(None,None)
@@ -24,14 +24,14 @@ Mileage: {self.lastService.miles}
 '''
         return repString
 
-    def setCurrentMileage(self,miles):
+    def setCurrentMileage(self,miles: int):
         self.currentMileage = miles
 
     def setLastService(self, year:int,month:int,day:int, miles: int):
         lastServiceDate = date(year=year,month=month,day=day)
         self.lastService  = ServiceRequirement(lastServiceDate,miles)
 
-    def setServiceInterval(self,miles, years=0, months=0):
+    def setServiceInterval(self,miles: int, years=0, months=0):
         time = relativedelta(years=years,months=months)
         self.serviceInterval = ServiceRequirement(time, miles)
 
@@ -46,24 +46,36 @@ Mileage: {self.lastService.miles}
         else:
             miles = self.serviceInterval.miles - currentMileage + self.lastService.miles
         
-        return ServiceRequirement(date,miles)
+        return ServiceRequirement(date ,miles)
+    def componentCheck(self, currentMileage):
+        nextService = self.nextService(currentMileage)
+        componentOk = True
+        if nextService.date != None and nextService.date < datetime.today().date():
+            componentOk = False
+        if nextService.miles != None and nextService.miles < 0:
+            componentOk = False
+        return componentOk
+
+
     def logNextService(self, currentMileage):
         nextService = self.nextService(currentMileage)
         print(
 f'''
+{BColours().OK if self.componentCheck(currentMileage) else BColours.BAD}
 -----{self.name} Due-----
 Date Due: {nullCheck(nextService.date)}
 Miles Until Due: {nullCheck(nextService.miles)}
+{BColours().OK}
 ''')
 
 
 class Engine:
-    def __init__(self, cylinders):
+    def __init__(self, cylinders: int):
         self.sparkPlugs = {}
-        for i in range(0,cylinders):
+        for i in range(1,cylinders +1):
             self.sparkPlugs[i] = GenericComponent("Spark Plug " + str(i))
     
-    def getSparkPlug(self, id):
+    def getSparkPlug(self, id: int):
         return self.sparkPlugs[id]
 
 
@@ -73,11 +85,11 @@ class Oil:
         self.fluid = GenericComponent("Oil")
 
 class Brakes:
-    def __init__(self, number):
+    def __init__(self, number: int):
         self.fluid = GenericComponent("Break Fluid")
         self.callipers = {}
         self.disks = {}
-        for i in range(0,number):
+        for i in range(1,number+1):
             self.callipers[i] = GenericComponent("Brake Calliper " + str(i))
             self.disks[i] = GenericComponent("Break Disk " + str(i))
     def getCalliper(self, num):
@@ -91,7 +103,7 @@ class Chain:
         self.cleanLube = GenericComponent("Clean and Lube")
 
 class Tyres:
-    def __init__(self, number):
+    def __init__(self, number: int):
         self.tyres = {}
         if number == 4:
             self.tyres["F-Left"] = GenericComponent("Front Left Tyre")
@@ -102,9 +114,9 @@ class Tyres:
             self.tyres["Front"] = GenericComponent("Front Tyre")
             self.tyres["Rear"] = GenericComponent("Rear Tyre")
         else:
-            for i in range (0,number):
+            for i in range (1,number+1):
                 self.tyres[i] = GenericComponent("Tyre" + i)
 
-    def getTyre(self, tyrePos):
+    def getTyre(self, tyrePos: str):
         return self.tyres[tyrePos]
 

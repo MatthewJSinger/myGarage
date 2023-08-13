@@ -1,7 +1,7 @@
 from Components import *
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
-from Util import nullCheck
+from Util import nullCheck, BColours
 
 class Vehicle:
     def __init__(self, 
@@ -88,14 +88,14 @@ class Vehicle:
         self.logComponent(self.battery)
 
         print('------Engine------')
-        for i in range(0,self.cylinders):
+        for i in range(1,self.cylinders+1):
             self.logComponent(self.engine.getSparkPlug(i))
         print('------Oil------')
         self.logComponent(self.oil.filter)
         self.logComponent(self.oil.fluid)
 
         print('------Brakes------')
-        for i in range(0,self.wheelNumber):
+        for i in range(1,self.wheelNumber+1):
             self.logComponent(self.brakes.getCalliper(i))
             self.logComponent(self.brakes.getDisk(i))
         self.logComponent(self.brakes.fluid)
@@ -110,7 +110,7 @@ class Vehicle:
             self.logComponent(self.tyres.getTyre("Front"))
             self.logComponent(self.tyres.getTyre("Rear"))
         else:
-            for i in range(0,self.wheelNumber):
+            for i in range(1,self.wheelNumber+1):
                 self.logComponent(self.tyres.getTyre(i))
 
         
