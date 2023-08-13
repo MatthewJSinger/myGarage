@@ -1,5 +1,6 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
+from Util import nullCheck
 
 
 class ServiceRequirement:
@@ -51,8 +52,8 @@ Mileage: {self.lastService.miles}
         print(
 f'''
 -----{self.name} Due-----
-Date Due: {nextService.date if nextService.date != None else "Unknown"}
-Miles Until Due: {nextService.miles if nextService.miles != None else "Unknown"}
+Date Due: {nullCheck(nextService.date)}
+Miles Until Due: {nullCheck(nextService.miles)}
 ''')
 
 
