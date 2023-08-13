@@ -8,14 +8,15 @@ class Vehicle:
                  vehicleType: str,
                   make: str,
                   model: str, 
-                  year: int, 
+                  dateReg: date, 
                   reg: str, 
                   cylinders: int, 
                   **kwargs):
         self.type = vehicleType
         self.make = make
         self.model = model
-        self.year = year
+        self.dateReg = dateReg
+        self.year = dateReg.day
         self.reg = reg
 
         self.engine = Engine(cylinders)
@@ -34,9 +35,12 @@ class Vehicle:
 
         if self.type == "Motorcycle":
             self.chain = Chain()
-        
-        self.setMotInterval(years=1)
+        dateRegDelta = relativedelta(
+            years=dateReg.year,
+            months=dateReg.month,
+            days=dateReg.day)
 
+        self.setMotInterval(years=1)
         self.mileage = None
         self.lastMot = None
 
@@ -55,7 +59,12 @@ class Vehicle:
        self.motInterval = relativedelta(years=years,months=months,days=days)
 
     def getNextMot(self):
-        return self.lastMot + self.motInterval
+        if ((datetime.today().date() - self.dateReg).days)/365 < 3:
+            return self.dateReg + relativedelta(years=+3)
+        elif(self.lastMot != None):
+            return self.lastMot + self.motInterval
+        else:
+            return "Unknown"
     
     def printAllVehicleData(self):
         outString = f'''
