@@ -16,22 +16,23 @@ class Vehicle:
         self.make = make
         self.model = model
         self.dateReg = dateReg
-        self.year = dateReg.day
+        self.year = dateReg.year
         self.reg = reg
-
+        
+        self.cylinders = cylinders
         self.engine = Engine(cylinders)
         self.oil = Oil()
         self.battery = GenericComponent("Battery")
-
+        self.wheelNumber = 0
         if "wheelNumber" in kwargs and kwargs["wheelNumber"] != 0:
-            self.brakes = Brakes(kwargs["wheelNumber"])
-            self.tyres = Tyres(kwargs("wheelNumber"))
+            self.wheelNumber = kwargs["wheelNumber"]
         elif self.type == "Car":
-            self.brakes = Brakes(4)
-            self.tyres = Tyres(4)
+            self.wheelNumber = 4
         elif self.type == "Motorcycle":
-            self.brakes = Brakes(2)
-            self.tyres = Tyres(2)
+            self.wheelNumber = 2
+    
+        self.brakes = Brakes(self.wheelNumber)
+        self.tyres = Tyres(self.wheelNumber)
 
         if self.type == "Motorcycle":
             self.chain = Chain()
@@ -78,3 +79,40 @@ class Vehicle:
         Next MOT: {self.getNextMot()}
         '''
         print(outString)
+    
+    def logComponent(self,component : GenericComponent):
+        component.logNextService(self.mileage)
+
+    def logComponents(self):
+
+        self.logComponent(self.battery)
+
+        print('------Engine------')
+        for i in range(0,self.cylinders):
+            self.logComponent(self.engine.getSparkPlug(i))
+        print('------Oil------')
+        self.logComponent(self.oil.filter)
+        self.logComponent(self.oil.fluid)
+
+        print('------Brakes------')
+        for i in range(0,self.wheelNumber):
+            self.logComponent(self.brakes.getCalliper(i))
+            self.logComponent(self.brakes.getDisk(i))
+        self.logComponent(self.brakes.fluid)
+
+        print("------Tyres------")
+        if self.wheelNumber == 4:
+            self.logComponent(self.tyres.getTyre("F-Left"))
+            self.logComponent(self.tyres.getTyre("F-Right"))
+            self.logComponent(self.tyres.getTyre("B-Left"))
+            self.logComponent(self.tyres.getTyre("B-Right"))
+        elif self.wheelNumber == 2:
+            self.logComponent(self.tyres.getTyre("Front"))
+            self.logComponent(self.tyres.getTyre("Rear"))
+        else:
+            for i in range(0,self.wheelNumber):
+                self.logComponent(self.tyres.getTyre(i))
+
+        
+
+

@@ -16,4 +16,4 @@ if __name__ == '__main__':
     vehicle.battery.setServiceInterval(6000,years=9)
     vehicle.printAllVehicleData()
     print(vehicle.battery)
-    vehicle.battery.logNextService(vehicle.mileage)
+    vehicle.logComponents()

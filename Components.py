@@ -11,6 +11,8 @@ class ServiceRequirement:
 class GenericComponent:
     def __init__(self, name):
         self.name = name
+        self.lastService = ServiceRequirement(None,None)
+        self.serviceInterval = ServiceRequirement(None,None)
 
     def __repr__(self):
         repString = f'''
@@ -34,23 +36,30 @@ Mileage: {self.lastService.miles}
 
 
     def nextService(self,currentMileage: int):
-        date = self.lastService.date + self.serviceInterval.date
-        miles = self.serviceInterval.miles - currentMileage + self.lastService.miles
+        if self.lastService.date == None or self.serviceInterval.date == None:
+            date = None
+        else:
+            date = self.lastService.date + self.serviceInterval.date
+        if self.lastService.miles == None or self.serviceInterval.miles == None:
+            miles = None
+        else:
+            miles = self.serviceInterval.miles - currentMileage + self.lastService.miles
+        
         return ServiceRequirement(date,miles)
     def logNextService(self, currentMileage):
         nextService = self.nextService(currentMileage)
         print(
 f'''
 -----{self.name} Due-----
-Date Due: {nextService.date}
-Miles Until Due: {nextService.miles}
+Date Due: {nextService.date if nextService.date != None else "Unknown"}
+Miles Until Due: {nextService.miles if nextService.miles != None else "Unknown"}
 ''')
 
 
 class Engine:
     def __init__(self, cylinders):
         self.sparkPlugs = {}
-        for i in range(1,cylinders):
+        for i in range(0,cylinders):
             self.sparkPlugs[i] = GenericComponent("Spark Plug " + str(i))
     
     def getSparkPlug(self, id):
@@ -67,9 +76,13 @@ class Brakes:
         self.fluid = GenericComponent("Break Fluid")
         self.callipers = {}
         self.disks = {}
-        for i in range(1,number):
+        for i in range(0,number):
             self.callipers[i] = GenericComponent("Brake Calliper " + str(i))
             self.disks[i] = GenericComponent("Break Disk " + str(i))
+    def getCalliper(self, num):
+        return self.callipers[num]
+    def getDisk(self, num):
+        return self.disks[num]
 
 class Chain: 
     def __init__(self):
@@ -87,4 +100,10 @@ class Tyres:
         elif number == 2:
             self.tyres["Front"] = GenericComponent("Front Tyre")
             self.tyres["Rear"] = GenericComponent("Rear Tyre")
+        else:
+            for i in range (0,number):
+                self.tyres[i] = GenericComponent("Tyre" + i)
+
+    def getTyre(self, tyrePos):
+        return self.tyres[tyrePos]
 
