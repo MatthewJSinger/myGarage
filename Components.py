@@ -28,7 +28,7 @@ Mileage: {self.lastService.miles}
         lastServiceDate = date(year=year,month=month,day=day)
         self.lastService  = ServiceRequirement(lastServiceDate,miles)
 
-    def setServiceInterval(self, years,months, miles):
+    def setServiceInterval(self,miles, years=0, months=0):
         time = relativedelta(years=years,months=months)
         self.serviceInterval = ServiceRequirement(time, miles)
 
